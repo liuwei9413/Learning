@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+		/*		
+			window传参
+				1.根据作用于链从内部往外查找，把window作为参数传到函数内部，就不用往外查找window了;
+				2.存成变量 方便压缩		
+		*/
+		(funciton(window, undefined) {
+			//window
+			//undefined在某些浏览器下可以被修改
+		})(window)	
+	</script>
+</body>
+</html>

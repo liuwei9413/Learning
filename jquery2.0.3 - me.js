@@ -22,7 +22,7 @@
 /*定义了一些变量和函数 jQuery = function(){} 开始*/
     var
     // A central reference to the root jQuery(document)
-        rootjQuery,
+        rootjQuery,     //jQuery(document)
 
         // The deferred used on DOM ready
         readyList,
@@ -37,16 +37,16 @@
         docElem = document.documentElement,
 
         // Map over jQuery in case of overwrite
-        _jQuery = window.jQuery,
+        _jQuery = window.jQuery,    //防冲突
 
         // Map over the $ in case of overwrite
-        _$ = window.$,
+        _$ = window.$,              //防冲突
 
         // [[Class]] -> type pairs
-        class2type = {},
+        class2type = {},            //类型判断 
 
         // List of deleted data cache ids, so we can reuse them
-        core_deletedIds = [],
+        core_deletedIds = [],       //2.0.3版本 只是空数组
 
         core_version = "2.0.3",
 
@@ -57,39 +57,39 @@
         core_indexOf = core_deletedIds.indexOf,
         core_toString = class2type.toString,
         core_hasOwn = class2type.hasOwnProperty,
-        core_trim = core_version.trim,
+        core_trim = core_version.trim,          //高级浏览器 有trim方法 去前后空格
 
         // Define a local copy of jQuery
-        jQuery = function(selector, context) {
+        jQuery = function(selector, context) {  //$() jQuery()方法
             // The jQuery object is actually just the init constructor 'enhanced'
             return new jQuery.fn.init(selector, context, rootjQuery);
         },
 
         // Used for matching numbers
-        core_pnum = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source,
+        core_pnum = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source,   //数字
 
         // Used for splitting on whitespace
-        core_rnotwhite = /\S+/g,
+        core_rnotwhite = /\S+/g,    //空格
 
         // A simple way to check for HTML strings
         // Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
         // Strict HTML recognition (#11290: must start with <)
-        rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,
+        rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/, //<p>HTML标签 || #div1
 
         // Match a standalone tag
-        rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
+        rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,  //空标签 如:<p></p>
 
         // Matches dashed string for camelizing
-        rmsPrefix = /^-ms-/,
-        rdashAlpha = /-([\da-z])/gi,
+        rmsPrefix = /^-ms-/,        //前缀
+        rdashAlpha = /-([\da-z])/gi,    //驼峰转法 -margin-left->MarginLeft
 
         // Used by jQuery.camelCase as callback to replace()
-        fcamelCase = function(all, letter) {
+        fcamelCase = function(all, letter) {        //转驼峰回调
             return letter.toUpperCase();
         },
 
         // The ready event handler and self cleanup method
-        completed = function() {
+        completed = function() {        //DOM加载成功回调
             document.removeEventListener("DOMContentLoaded", completed, false);
             window.removeEventListener("load", completed, false);
             jQuery.ready();
@@ -102,10 +102,10 @@
 /*给JQ对象，添加一些方法和属性 开始*/
     jQuery.fn = jQuery.prototype = {
         // The current version of jQuery being used
-        jquery: core_version,
+        jquery: core_version,   //版本
 
-        constructor: jQuery,
-        init: function(selector, context, rootjQuery) {
+        constructor: jQuery,    //修正constructor指向
+        init: function(selector, context, rootjQuery) {     //初始化和参数管理
             var match, elem;
 
             // HANDLE: $(""), $(null), $(undefined), $(false)
@@ -113,39 +113,39 @@
                 return this;
             }
 
-            // Handle HTML strings
+            // Handle HTML strings $('<li>') $('#div1') $('<li>1</li><li></li>') $('.box') $('#div1 div.box')
             if (typeof selector === "string") {
                 if (selector.charAt(0) === "<" && selector.charAt(selector.length - 1) === ">" && selector.length >= 3) {
                     // Assume that strings that start and end with <> are HTML and skip the regex check
-                    match = [null, selector, null];
+                    match = [null, selector, null];     //$('<li>') $('<li>1</li><li></li>')
 
                 } else {
-                    match = rquickExpr.exec(selector);
-                }
+                    match = rquickExpr.exec(selector);  // $('#div1') $('<li>hello') $('.box') $('#div1 div.box')
+                }                                       //['#div1',null,'div1'] ['<li>hello','<li>',null] null null
 
                 // Match html or make sure no context is specified for #id
-                if (match && (match[1] || !context)) {
+                if (match && (match[1] || !context)) {  //非null id和创建标签
 
                     // HANDLE: $(html) -> $(array)
-                    if (match[1]) {
-                        context = context instanceof jQuery ? context[0] : context;
+                    if (match[1]) {     //创建标签
+                        context = context instanceof jQuery ? context[0] : context; //document
 
                         // scripts is true for back-compat
-                        jQuery.merge(this, jQuery.parseHTML(
-                            match[1],
+                        jQuery.merge(this, jQuery.parseHTML(    //parseHTML str转成节点数组 第三个参数默认为false 
+                            match[1],                           //true表示可以添加<script>alert(4)</script>
                             context && context.nodeType ? context.ownerDocument || context : document,
-                            true
+                            true                                //merge()在源码中 可以合并json
                         ));
 
-                        // HANDLE: $(html, props)
+                        // HANDLE: $(html, props)   //$('<li>',{title:'hi',html:'abcd'})
                         if (rsingleTag.test(match[1]) && jQuery.isPlainObject(context)) {
                             for (match in context) {
                                 // Properties of context are called as methods if possible
-                                if (jQuery.isFunction(this[match])) {
+                                if (jQuery.isFunction(this[match])) {   //html()方法
                                     this[match](context[match]);
 
                                     // ...and otherwise set as attributes
-                                } else {
+                                } else {    //title属性
                                     this.attr(match, context[match]);
                                 }
                             }
@@ -154,7 +154,7 @@
                         return this;
 
                         // HANDLE: $(#id)
-                    } else {
+                    } else {            //id
                         elem = document.getElementById(match[2]);
 
                         // Check parentNode to catch when Blackberry 4.6 returns
@@ -171,33 +171,33 @@
                     }
 
                     // HANDLE: $(expr, $(...))
-                } else if (!context || context.jquery) {
+                } else if (!context || context.jquery) {    //$(document) jQuery(document).find()
                     return (context || rootjQuery).find(selector);
 
                     // HANDLE: $(expr, context)
                     // (which is just equivalent to: $(context).find(expr)
                 } else {
-                    return this.constructor(context).find(selector);
+                    return this.constructor(context).find(selector);    //原生document jQuery(document).find()
                 }
 
                 // HANDLE: $(DOMElement)
-            } else if (selector.nodeType) {
+            } else if (selector.nodeType) { //节点类型 $(this) $(document)
                 this.context = this[0] = selector;
                 this.length = 1;
                 return this;
 
                 // HANDLE: $(function)
                 // Shortcut for document ready
-            } else if (jQuery.isFunction(selector)) {
+            } else if (jQuery.isFunction(selector)) {   //$(function)
                 return rootjQuery.ready(selector);
             }
 
-            if (selector.selector !== undefined) {
+            if (selector.selector !== undefined) {  //$($('#div1')) = $('#div1')
                 this.selector = selector.selector;
                 this.context = selector.context;
             }
 
-            return jQuery.makeArray(selector, this);
+            return jQuery.makeArray(selector, this);    //markArray 类数组转数组  加第二个参数可以转成json
         },
 
         // Start with an empty selector
@@ -206,13 +206,13 @@
         // The default length of a jQuery object is 0
         length: 0,
 
-        toArray: function() {
+        toArray: function() {   //转原生数组
             return core_slice.call(this);
         },
 
         // Get the Nth element in the matched element set OR
         // Get the whole matched element set as a clean array
-        get: function(num) {
+        get: function(num) {   //转原生集合或者单个元素 
             return num == null ?
 
                 // Return a 'clean' array
@@ -224,7 +224,7 @@
 
         // Take an array of elements and push it onto the stack
         // (returning the new matched element set)
-        pushStack: function(elems) {
+        pushStack: function(elems) {    //入栈 类似于坐电梯 先进后出 $('div').pushStack('span').css('..')
 
             // Build a new jQuery matched element set
             var ret = jQuery.merge(this.constructor(), elems);
@@ -281,9 +281,9 @@
 
         // For internal use only.
         // Behaves like an Array's method, not like a jQuery method.
-        push: core_push,
-        sort: [].sort,
-        splice: [].splice
+        push: core_push,    //内部使用 将数组方法挂载到jq对象上
+        sort: [].sort,      //内部使用 将数组方法挂载到jq对象上
+        splice: [].splice   //内部使用 将数组方法挂载到jq对象上
     };
     // Give the init function the jQuery prototype for later instantiation
     jQuery.fn.init.prototype = jQuery.fn;
@@ -3242,7 +3242,7 @@
 
 
 
-/*data() : 数据缓存 开始*/
+/*support() : 功能检测 开始*/
     jQuery.support = (function(support) {
         var input = document.createElement("input"),
             fragment = document.createDocumentFragment(),
@@ -3358,7 +3358,12 @@
 
         return support;
     })({});
+/*support() : 功能检测 结束*/
 
+
+
+
+/*data() : 数据缓存挂载 开始*/
     /*
     	Implementation Summary
 
@@ -5218,7 +5223,6 @@
 
 
 
-/*DOM操作 : 添加 删除 获取 包装 DOM筛选 开始*/
     var isSimple = /^.[^:#\[\.,]*$/,
         rparentsprev = /^(?:parents|prev(?:Until|All))/,
         rneedsContext = jQuery.expr.match.needsContext,
@@ -5230,6 +5234,8 @@
             prev: true
         };
 
+
+/*DOM操作 : 添加 删除 获取 包装 DOM筛选 开始*/
     jQuery.fn.extend({
         find: function(selector) {
             var i,
