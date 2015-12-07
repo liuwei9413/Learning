@@ -124,7 +124,7 @@
                 }                                       //['#div1',null,'div1'] ['<li>hello','<li>',null] null null
 
                 // Match html or make sure no context is specified for #id
-                if (match && (match[1] || !context)) {  //非null id和创建标签
+                if (match && (match[1] || !context)) {  //非null  id和创建标签
 
                     // HANDLE: $(html) -> $(array)
                     if (match[1]) {     //创建标签
@@ -300,7 +300,7 @@
             deep = false;
 
         // Handle a deep copy situation
-        if (typeof target === "boolean") {
+        if (typeof target === "boolean") {  //是不是深拷贝
             deep = target;
             target = arguments[1] || {};
             // skip the boolean and the target
@@ -308,12 +308,12 @@
         }
 
         // Handle case when target is a string or something (possible in deep copy)
-        if (typeof target !== "object" && !jQuery.isFunction(target)) {
+        if (typeof target !== "object" && !jQuery.isFunction(target)) { //是不是对象
             target = {};
         }
 
         // extend jQuery itself if only one argument is passed
-        if (length === i) {
+        if (length === i) {     //是不是插件
             target = this;
             --i;
         }
@@ -327,25 +327,25 @@
                     copy = options[name];
 
                     // Prevent never-ending loop
-                    if (target === copy) {
+                    if (target === copy) {  //防止循环引用 var a = {}, $.extend(a,{name:a});
                         continue;
                     }
 
                     // Recurse if we're merging plain objects or arrays
-                    if (deep && copy && (jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)))) {
+                    if (deep && copy && (jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)))) { //深拷贝
                         if (copyIsArray) {
                             copyIsArray = false;
                             clone = src && jQuery.isArray(src) ? src : [];
 
                         } else {
-                            clone = src && jQuery.isPlainObject(src) ? src : {};
-                        }
+                            clone = src && jQuery.isPlainObject(src) ? src : {};    //var a = {name:{job:'it'}}
+                        }                                                           //var b = {name:{age:22}}
 
                         // Never move original objects, clone them
                         target[name] = jQuery.extend(deep, clone, copy);
 
                         // Don't bring in undefined values
-                    } else if (copy !== undefined) {
+                    } else if (copy !== undefined) {    //浅拷贝
                         target[name] = copy;
                     }
                 }
