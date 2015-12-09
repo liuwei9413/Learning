@@ -299,13 +299,8 @@
             length = arguments.length,
             deep = false;
 
-<<<<<<< HEAD
-        // Handle a deep copy situation
-        if (typeof target === "boolean") {  //是不是深拷贝
-=======
         // Handle a deep copy situation 处理深复制情况
         if (typeof target === "boolean") {
->>>>>>> f8438ad169742005cdc3829af7164196277f3e1b
             deep = target;
             target = arguments[1] || {};
             // skip the boolean and the target
@@ -317,13 +312,8 @@
             target = {};
         }
 
-<<<<<<< HEAD
-        // extend jQuery itself if only one argument is passed
-        if (length === i) {     //是不是插件
-=======
         // extend jQuery itself if only one argument is Passed 如果只有一个参数是通过扩展jQuery本身
         if (length === i) {
->>>>>>> f8438ad169742005cdc3829af7164196277f3e1b
             target = this;
             --i;
         }
@@ -336,15 +326,6 @@
                     src = target[name];
                     copy = options[name];
 
-<<<<<<< HEAD
-                    // Prevent never-ending loop
-                    if (target === copy) {  //防止循环引用 var a = {}, $.extend(a,{name:a});
-                        continue;
-                    }
-
-                    // Recurse if we're merging plain objects or arrays
-                    if (deep && copy && (jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)))) { //深拷贝
-=======
                     // Prevent never-ending loop 防止无限循环
                     if (target === copy) {
                         continue;
@@ -352,7 +333,6 @@
 
                     // Recurse if we're merging plain objects or arrays 递归如果我们合并对象或数组
                     if (deep && copy && (jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)))) {
->>>>>>> f8438ad169742005cdc3829af7164196277f3e1b
                         if (copyIsArray) {
                             copyIsArray = false;
                             clone = src && jQuery.isArray(src) ? src : [];
