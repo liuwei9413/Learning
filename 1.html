@@ -10,7 +10,7 @@
 	<div></div>
 	<div></div>
 	<script>
-	/*jQuery()对象不用内置new() 可直接使用jQuery 而不用new操作符
+//	jQuery()对象不用内置new() 可直接使用jQuery 而不用new操作符
 		var jQuery = function() {
 			return new jQuery.fn.init();
 		};
@@ -23,8 +23,9 @@
 
 		jQuery.fn.init.prototype = jQuery.fn;
 
-		jQuery();	//111 
-	*/
+		jQuery();	//111
+
+    
 
 	/*匹配html标签
 		rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/;
@@ -39,11 +40,7 @@
 	// }
 
 	// console.log($('div').toArray());
-
-	var aDiv = document.getElementsByTagName('div');	//元素集合转数组
-	var core_slice = [].slice;
-	var arr = core_slice.call(aDiv);
-	console.log(arr);		// [div, div, div]
+	//
 
 	</script>
 </body>
