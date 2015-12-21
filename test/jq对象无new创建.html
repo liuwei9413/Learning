@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jq对象创建</title>
+</head>
+<body>
+
+<script>
+
+    //普通对象创建
+    /*function Aaa() {
+        this.name = 'fengge';
+    };
+
+    Aaa.prototype.show = function() {
+        console.log(this.name);
+    };
+    Aaa.prototype.css = function() {
+        console.log('我是css()方法：' + this.name);
+    }
+
+    var a = new Aaa();
+    a.show();
+    a.css();*/
+
+
+    //jq对象无new创建 实现 $().css();
+    function jQuery() {
+        return new jQuery.prototype.init();
+    };
+
+    jQuery.prototype.init = function() {    //jq对象构造器
+        this.name = 'liuwei';
+    };
+
+    /*jQuery.prototype.init.prototype.css = function() {    //
+        console.log(this.name);
+    };*/
+
+    jQuery.prototype.css = function() {
+        console.log(this.name);
+    };
+
+    jQuery.fn = jQuery.prototype;
+
+//    jQuery.prototype.init.prototype = jQuery.prototype;
+    jQuery.fn.init.prototype = jQuery.fn;
+
+    console.log(jQuery().css());
+
+
+
+
+</script>
+
+</body>
+</html>
