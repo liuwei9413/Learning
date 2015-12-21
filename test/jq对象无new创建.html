@@ -30,19 +30,28 @@
         return new jQuery.prototype.init();
     };
 
-    jQuery.prototype.init = function() {    //jq对象构造器
-        this.name = 'liuwei';
-    };
+//    jQuery.prototype.init = function() {    //jq对象构造器
+//        this.name = 'liuwei';
+//    };
+
+    jQuery.fn = jQuery.prototype = {
+        name : 'liuwei',
+
+        init : function() {
+//            console.log(this.name)
+        },
+        constructor : jQuery
+    }
 
     /*jQuery.prototype.init.prototype.css = function() {    //
         console.log(this.name);
     };*/
 
-    jQuery.prototype.css = function() {
+    jQuery.fn.css = function() {
         console.log(this.name);
     };
 
-    jQuery.fn = jQuery.prototype;
+
 
 //    jQuery.prototype.init.prototype = jQuery.prototype;
     jQuery.fn.init.prototype = jQuery.fn;
