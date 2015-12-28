@@ -362,8 +362,9 @@
 /*jQuery.extend() : 扩展一些工具方法 开始*/
     jQuery.extend({
         // Unique for each copy of jQuery on the page 独特的jQuery页面上的每个副本
+        //生成唯一的JQ字符串（内部）
         expando: "jQuery" + (core_version + Math.random()).replace(/\D/g, ""),
-
+        //防止冲突
         noConflict: function(deep) {
             if (window.$ === jQuery) {
                 window.$ = _$;
