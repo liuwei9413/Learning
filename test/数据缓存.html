@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据缓存</title>
+    <style>
+        div { margin:5px; background:yellow; }
+        button { margin:5px; font-size:14px; }
+        p { margin:5px; color:blue; }
+        span { color:red; }
+    </style>
+    <script src="../jquery2.0.3.js"></script>
+</head>
+<body>
+<!--4.1内存泄露-->
+<!--<div id="div1"></div>-->
+
+<!--4.2 jQuery的缓存系统-->
+<!--<div>A div</div>
+<button>Get "blah" from the div</button>
+<button>Set "blah" to "hello"</button>
+
+<button>Set "blah" to 86</button>
+<button>Remove "blah" from the div</button>
+<p>The "blah" value of this div is <span>?</span></p>-->
+<!--4.2 jQuery的缓存系统-->
+
+<!--4.3 静态与实力方法的区别-->
+<div id="ddd">111</div>
+<!--4.3 静态与实力方法的区别-->
+
+<script>
+/*4.1 内存泄露
+   * 1.循环引用
+   * 2.Javascript闭包
+   * 3.DOM插入
+    * */
+    /*var div1 = document.getElementById('div1');
+    console.log(typeof div1);  */ //object DOM节点也是对象，所以可以添加自定义属性
+
+
+/*
+* 4.2 jQuery的缓存系统 jQuery.data
+* */
+
+/*$('button').click(function() {
+    var value, div = $('div')[0];
+    switch ( $('button').index(this) ) {
+        case 0:
+            value = $.data(div, 'blah');
+            break;
+        case 1:
+            $.data(div, 'blah', 'hello');
+            value = "Stored!";
+            break;
+        case 2:
+            $.data(div, 'blah', 86);
+            value = "Stored!";
+            break;
+        case 3:
+            $.removeData(div, 'blah');
+            value = "Removed!";
+            break;
+    }
+    $('span').text('' + value);
+});*/
+
+
+/*
+ * 4.3 静态与实例方法的区别 $.data：不覆盖  $().data：覆盖
+ * */
+var ele1 = $('div');
+var ele2 = $('div');
+
+ele1.data('name', 'fengge');
+ele2.data('name', 'liuwei');
+
+console.log(ele1.data('name')); //liuwei
+console.log(ele2.data('name')); //liuwei
+
+$.data(ele1, 'name', 'fengge');
+$.data(ele2, 'name', 'liuwei');
+
+console.log($.data(ele1, 'name')); //fengge
+console.log($.data(ele2, 'name')); //liuwei
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ </script>
+
+</body>
+</html>

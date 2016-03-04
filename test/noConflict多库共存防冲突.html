@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>noConflict多库共存防冲突</title>
+    <script>
+        //模拟其他库
+        var $ = function(id) {
+            alert(id);
+        };
+
+        var jQuery = function(id) {
+            alert(id)
+        };
+    </script>
+
+    <script>
+        var _$ = window.$,
+            _jQuery = window.jQuery;
+//        console.log(_$);
+    </script>
+
+    <script src="../jquery2.0.3.js"></script>
+</head>
+<body>
+
+<div id="div1">aaa</div>
+
+<script>
+    /*
+    *   其他库在jquery库之前，$会被jq覆盖。使用$.noConflict()交出jq对$的控制
+    *   其他库在jquery之后，无须使用$.noConflict()
+    *
+    *   防冲突办法：1. $.noConflict();
+    *              2.利用闭包 (function($) {...})(jQuery);
+      *            3.var jq = noConflict(); 获得jQuery对象
+    * */
+
+    /*console.log($); //jq
+
+    $.noConflict(); //交出对$控制
+
+    console.log($); //其他库*/
+
+
+    var noConflict2 = function(deep) {
+        if ( window.$ === jQuery ) {
+            window.$ = _$;
+        };
+
+        if ( deep && window.jQuery === jQuery ) {
+            window.jQuery = _jQuery;
+        };
+
+        return jQuery;
+    };
+
+//    noConflict2();
+
+    var jq = noConflict2();
+    jq('#div1').css('background','#f00');
+    jQuery('#div1').css('font-size','24px');
+
+//    console.log(jQuery);
+
+</script>
+
+</body>
+</html>

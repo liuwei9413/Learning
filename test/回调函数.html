@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>回调函数</title>
+    <script src="../jquery2.0.3.js"></script>
+</head>
+
+<div id="div3-4"></div>
+
+<script>
+//3-1 理解回调
+/*var test1 = function(callback) {
+    *//*执行长时间操作*//*
+    for (var i = 0; i < 2000; i++) {
+        console.log(i);
+    };
+
+    callback(); //同步回调
+}
+
+test1(function() {
+    console.log('cb');
+});*/
+
+
+/*   3-2 回调灵活运用
+ *   整体执行顺序 cb11, cb22, 1, 2, 3, cb
+ * */
+/*function aaa(list, callback) {
+    setTimeout(function() {
+        var task;
+        if ( task = list.shift() ) {
+            task();
+        };
+        if (list.length > 0) {
+            arguments.callee(list)
+        } else {
+            callback();
+        }
+    }, 25);
+};
+
+aaa([function() {console.log(1)},
+    function(){console.log(2)},
+    function(){console.log(3)}],
+    function() {console.log('cb')});
+
+//jq方式
+var callbacks = $.Callbacks();
+callbacks.add(function() {
+    console.log('cb11')
+});
+callbacks.add(function() {
+    console.log('cb22')
+});
+callbacks.fire();*/
+
+
+//3-3 观察者模式
+/*var Observable = {
+    callbacks : [],
+    add : function(fn) {
+        this.callbacks.push(fn)
+    },
+    fire : function() {
+        this.callbacks.forEach(function(fn) {
+            fn();
+        })
+    }
+};
+//订阅
+Observable.add(function() {console.log(1)});
+Observable.add(function() {console.log(2)});
+//发布
+Observable.fire();*/
+
+//forEach(callback) 遍历数组每一项 执行callback
+/*var n = 0;
+[1,2,3].forEach(function(i) {
+    n += i;
+})
+console.log(n);*/
+
+
+//3-4 观察者模式实际运用
+/*
+* 所有的处理都在done()内部，不方便复用。耦合较高
+* */
+/*function ajax(arg) {
+    setTimeout(function() {
+        arg.done(arg.data);
+    }, 1000);
+};
+
+ajax({
+    data : 'test',
+    done : function(data) {
+        //数据处理
+        data += data;
+        //html渲染
+        $('#div3-4').html(data).css('background','#f00');
+        //其他处理
+        console.log(data);
+    }
+});*/
+
+
+/*
+* 上例修改: done()方法业务逻辑 通过发布订阅模式解耦合到 Observable对象的订阅方法中 方便复用和修改
+* */
+
+
+/*
+*   3-5 jQuery回调对象(事件触发机制) .add() .fire() .remove()  类似Observable对象(观察者模式对象)
+*    ☑  once: 确保这个回调列表只执行（ .fire() ）一次(像一个递延 Deferred)。
+     ☑  memory: 保持以前的值，将添加到这个列表的后面的最新的值立即执行调用任何回调 (像一个递延 Deferred)。
+     ☑  unique: 确保一次只能添加一个回调(所以在列表中没有重复的回调)。
+     ☑  stopOnFalse: 当一个回调返回false 时中断调用。
+* */
+/*var callbacks = $.Callbacks('once');
+callbacks.add(function() {
+    console.log('a')
+});
+callbacks.add(function() {
+    console.log('b')
+});
+
+callbacks.fire();   //a b
+callbacks.fire();   //添加了参数'once' 不执行*/
+
+
+/*
+ *  3-6 jQuery回调模块结构
+ *
+ */
+//参数缓存处理
+/*var optionsCache = {};
+var rnotwhite = (/\S+/g);
+
+function createOptions(options) {
+    var obj = optionsCache[options] = {};
+    jQuery.each(options.match(rnotwhite) || [], function(_, flag) {
+        obj[flag] = true;
+    });
+    console.log(optionsCache);
+    return obj;
+}
+
+function callback(options) {
+    options = typeof options === 'string' ?
+            (optionsCache[options] || createOptions(options)) :
+            jQuery.extend({}, options);
+};
+
+callback('once memory');    //Object {once memory: Object}
+callback('once unique');    //Object {once memory: Object, once unique: Object}
+callback('once memory');    //空
+callback('once unique');    //空*/
+
+
+/*
+*  3-8 once的设计 .fire() 只执行一次
+* */
+/*function Callbacks(options) {
+    var list = [], result;
+    result = {
+        add : function(fn) {
+            list.push(fn)
+        },
+        fire : function(arg) {
+            if (list) {
+                list.forEach(function(fn, index) {
+                    fn(arg);
+                });
+            }
+            if (options === 'once') {
+                list = undefined;
+            };
+        }
+    };
+    return result;
+};
+
+var cb = Callbacks('once');
+cb.add(function(arg) {
+    console.log(arg + ' say a')
+});
+cb.add(function(arg) {
+    console.log(arg + ' say b')
+});
+
+cb.fire('liuwei');
+cb.fire('fengge');*/
+
+
+/*
+ *  3-9 memory的设计 保持以前的值，将添加到这个列表的后面的最新的值立即执行调用任何回调 (像一个递延 Deferred)。
+ * */
+/*function Callbacks(options) {
+    var list = [];
+    var self;
+    var firingStart;
+    var firingIndex;
+    var firingLength;
+    var memory;
+
+    function _fire(data) {
+        memory = options === 'memory' && data;  //保存上一个参数
+        firingIndex = firingStart || 0;
+        firingStart = 0;
+        firingLength = list.length;
+        for (; list && firingIndex < firingLength; firingIndex++) {
+            list[firingIndex](data);
+        }
+    };
+
+    self = {
+        add : function(fn) {
+            var start = list.length;    //上一次list长度
+            list.push(fn);  //push fn 增加[]长度
+            if (memory) {   //判断有上一次参数值 执行回调
+                firingStart = start;    //上一次长度作为初始值
+                _fire(memory);  //立即执行回调
+            }
+        },
+        fire : function(args) {
+            if (list) {
+                _fire(args);
+            }
+        }
+    };
+
+    return self;
+};
+
+function fn1(val) {
+    console.log('fn1 says ' + val);
+}
+function fn2(val) {
+    console.log('fn2 says ' + val);
+}
+function fn3(val) {
+    console.log('fn3 says ' + val);
+}
+
+var cbs = Callbacks('memory');
+cbs.add(fn1);
+cbs.fire('foo');
+
+console.log('..........')
+
+cbs.add(fn2);
+cbs.fire('bar');
+
+console.log('..........')
+cbs.add(fn3);
+cbs.fire('aaron');*/
+
+
+/*
+* 3-10 unique的设计：确保一次只能添加一个回调(所以在列表中没有重复的回调)
+* push fn 到 list列表中 加上list.indexOf(fn) === -1  判断是否已经添加过相同fn
+* */
+//jq方法
+/*
+function fn1(val) {
+    console.log('fn1 says ' + val);
+}
+function fn2(val) {
+    console.log('fn2 says ' + val);
+}
+var callbacks = $.Callbacks('unique');
+callbacks.add(fn1); //fn1 says fengge
+callbacks.add(fn1); //过滤掉相同的回调
+callbacks.add(fn2); //fn2 says fengge
+callbacks.add(fn2); //过滤掉相同的回调
+callbacks.fire('fengge');
+*/
+
+
+/*
+ * 3-11 stopOnFalse：当一个回调返回false 时中断调用
+ *
+ * */
+/*function fn1(val) {
+    console.log('fn1 say ' + val);
+    return false;   //fn1返回false中断后面回调调用
+}
+function fn2(val) {
+    console.log('fn2 say ' + val);
+    return false;
+}
+
+var callbacks = $.Callbacks('stopOnFalse');
+callbacks.add(fn1);
+callbacks.fire('fengge');
+callbacks.add(fn2);
+callbacks.fire('liuwei');*/
+//结果：fn1 say fengge  fn1 say liuwei 只执行fn1 不再执行回调fn2
+
+//实现源码(memory unique, stopOnFalse)
+function Callbacks(options) {
+    var list = [];
+    var self;
+    var firingStart;
+    var firingIndex;
+    var firingLength;
+    var memory;
+
+    function _fire(data) {
+        memory = options === 'memory' && data;
+        firingIndex = firingStart || 0;
+        firingStart = 0;
+        firingLength = list.length;
+        for (; list && firingIndex < firingLength; firingIndex++) {
+            if (list[firingIndex](data) === false && options === 'stopOnFalse') {
+                break;
+            }
+        }
+    }
+
+    self = {
+        add: function(fn) {
+            var start = list.length;
+            if (options == 'unique') {
+                if (-1 === list.indexOf(fn)) {
+                    list.push(fn)
+                }
+            } else {
+                list.push(fn)
+            }
+            if (memory) {
+                firingStart = start; //获取最后一值
+                _fire(memory);
+            }
+        },
+        fire: function(args) {
+            if (list) {
+                _fire(args)
+            }
+        }
+    }
+    return self;
+}
+
+
+
+ </script>
+
+</body>
+</html>

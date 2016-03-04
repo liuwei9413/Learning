@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="jquery2.0.3 - me.js"></script>
+</head>
+<body style="margin: 0;">
+	<div style="position: absolute; left: 50px; top: 50px; margin: 0; padding: 0; background: #f00;"></div>
+	<script>
+//	jQuery()对象不用内置new() 可直接使用jQuery 而不用new操作符
+		var jQuery = function() {
+			return new jQuery.fn.init();
+		};
+		jQuery.fn = jQuery.prototype = {
+			constructor : jQuery,
+			init : function() {
+				console.log(111)
+			}
+		};
+
+		jQuery.fn.init.prototype = jQuery.fn;
+
+		jQuery();	//111
+
+    
+
+	/*匹配html标签
+		rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/;
+		match = rquickExpr.exec('<div class="hellow"><span>啊发生大发分类</span></div>xyz');
+		console.log(match[1]);		//<div class="hellow"><span>啊发生大发分类</span></div>
+	*/
+
+	// this = {
+	// 	0 : 'li',
+	// 	1 : 'li',
+	// 	length : 2
+	// }
+
+	// console.log($('div').toArray());
+	//
+
+    $('div').animate({
+        width : 100,
+        height : 100,
+        left : 0,
+        top : 0
+    }, 2000);
+
+	</script>
+</body>
+</html>

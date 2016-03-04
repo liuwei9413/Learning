@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jq 迭代器</title>
+    <script src="../jquery2.0.3.js"></script>
+</head>
+<body>
+
+<div>divdiv</div>
+<div>divdiv</div>
+<div>divdiv</div>
+
+<script>
+var each = function(obj, callback, context, arg) {
+    var i = 0;
+    var value;
+    var len = obj.length;
+
+    for (; i < len; i++) {
+        value = callback.call(context || null, obj[i], arg);
+        if (value === false) {  //通过回调函数的返回值条件 中断循环
+            break;
+        }
+    };
+};
+
+var arr = ['aaa', 'bbb', 'ccc'];
+
+each(arr, function(name, arg) {
+    if (name === 'bbb') {
+        return false;
+    };
+    console.log('name: ' + name + ' arg: ' + arg);
+}, this, 'woshicanshu');
+
+//pushStack 入栈
+$('div').pushStack($('div').eq(1)).css('background', 'red').end().css('color', 'green');
+
+
+</script>
+
+</body>
+</html>
